@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # 1. MySQL Database Service
+  mysql-db:
+    image: mysql:8.0
+    container_name: moodmate-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: moodmate
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - moodmate-net
+
+  # 2. Spring Boot Java Backend Service
+  backend-api:
+    build: ./backend
+    container_name: moodmate-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DATABASE_HOST=mysql-db
+      - DATABASE_PORT=3306
+      - DATABASE_NAME=moodmate
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=password
+    depends_on:
+      - mysql-db
+    networks:
+      - moodmate-net
+
+  # 3. Next.js Frontend Service
+  frontend-web:
+    build: ./frontend
+    container_name: moodmate-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend-api
+    networks:
+      - moodmate-net
+
+volumes:
+  mysql-data:
+
+networks:
+  moodmate-net:
+    driver: bridge

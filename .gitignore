@@ -1,0 +1,23 @@
+# Node
+node_modules/
+frontend/node_modules/
+
+# Java
+target/
+backend/target/
+
+# Build output
+dist/
+build/
+.next/
+
+# Environment
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
